@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Registration</title>
+    <style>
+        /* General Body Styling */
+        body {
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Centering the form on the page */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Styling the registration form card */
+        .registration-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Heading Styles */
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        /* Label Styles */
+        label {
+            font-size: 16px;
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Input Fields and Select Box */
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        /* Submit Button */
+        button {
+            background-color: #6c63ff;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Hover effect for the submit button */
+        button:hover {
+            background-color: #5a52e2;
+        }
+
+        /* Course Selection Disabled Option */
+        option[disabled] {
+            color: #d3d3d3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .registration-card {
+                padding: 20px;
+                width: 90%;
+            }
+
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <script>
+        // Fetch course data dynamically and populate dropdown
+        fetch("http://localhost:8080/course")
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById("coursename");
+                data.forEach(course => {
+                    const option = document.createElement("option");
+                    option.value = course.courses;
+                    option.text = course.courses + (course.seats <= 0 ? " (Full)" : "");
+                    if (course.seats <= 0) option.disabled = true;
+                    select.appendChild(option);
+                });
+            });
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <div class="registration-card">
+        <h1>Start Your Goal</h1>
+
+        <form action="http://localhost:8080/register" method="post">
+            <label for="name">Enter your name</label>
+            <input type="text" name="name" placeholder="Full Name" required>
+
+            <label for="emailid">Enter your email ID</label>
+            <input type="email" name="emailid" placeholder="Email" required>
+
+            <label for="mobileno">Enter your mobile number</label>
+            <input type="text" name="mobileno" placeholder="Mobile Number" required>
+
+            <label for="age">Enter your age</label>
+            <input type="number" name="age" placeholder="Age" required>
+
+            <label for="coursename">Choose your course</label>
+            <select name="coursename" id="coursename" required>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

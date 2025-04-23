@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Course Registration</title>
+  <style>
+    body {
+      background-color: #f4f4f9;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .registration-card {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    label {
+      font-size: 16px;
+      color: #333;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #6c63ff;
+      color: white;
+      padding: 15px;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    button:hover {
+      background-color: #5a52e2;
+    }
+
+    option[disabled] {
+      color: #d3d3d3;
+    }
+
+    @media (max-width: 600px) {
+      .registration-card {
+        padding: 20px;
+        width: 90%;
+      }
+
+      button {
+        font-size: 16px;
+      }
+    }
+
+    /* Popup Styles */
+    .popup {
+      display: none;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border: 1px solid #c3e6cb;
+      border-radius: 8px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="registration-card">
+    <div id="popup" class="popup">Successfully Registered! Start learning 🚀</div>
+
+    <h1>Start Your Goal</h1>
+    <form id="registrationForm">
+      <label for="name">Enter your name</label>
+      <input type="text" name="name" placeholder="Full Name" required>
+
+      <label for="emailid">Enter your email ID</label>
+      <input type="email" name="emailid" placeholder="Email" required>
+
+      <label for="mobileno">Enter your mobile number</label>
+      <input type="text" name="mobileno" placeholder="Mobile Number" required>
+
+      <label for="age">Enter your age</label>
+      <input type="number" name="age" placeholder="Age" required>
+
+      <label for="coursename">Choose your course</label>
+      <select name="coursename" id="coursename" required>
+      </select>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Populate dropdown
+  fetch("http://localhost:8080/course")
+    .then(res => res.json())
+    .then(data => {
+      const select = document.getElementById("coursename");
+      data.forEach(course => {
+        const option = document.createElement("option");
+        option.value = course.courses;
+        option.text = course.courses + (course.seats <= 0 ? " (Full)" : "");
+        if (course.seats <= 0) option.disabled = true;
+        select.appendChild(option);
+      });
+    });
+
+  // Handle form submission with popup
+  document.getElementById("registrationForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    fetch("http://localhost:8080/register", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        document.getElementById("popup").style.display = "block";
+        this.reset();
+      } else {
+        alert("Registration failed. Please try again.");
+      }
+    })
+    .catch(() => alert("Server error. Please try again later."));
+  });
+</script>
+
+</body>
+</html>
