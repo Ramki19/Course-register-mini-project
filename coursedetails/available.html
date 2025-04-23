@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Courses</title>
+    <script type="text/javascript" src="myscript.js"></script>
+    <style>
+        body {
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+        }
+        table {
+            margin-top: 50px;
+            border-collapse: collapse;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: lightblue;
+        }
+        td {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h2 style="text-align:center; margin-top: 30px;">Available Courses</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="100">Course Id</th>
+                <th width="150">Trainee Name</th>
+                <th width="150">Course</th>
+                <th width="100">Duration</th>
+                <th width="150">Seats Available</th>
+            </tr>
+        </thead>
+        <tbody id="coursetable">
+            <!-- Courses will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <script type="text/javascript">
+        window.onload = function() {
+            showCourses();
+        };
+
+        function showCourses() {
+            // Fetch the available courses from your backend
+            fetch("http://localhost:8080/course")
+                .then((response) => response.json())
+                .then((courses) => {
+                    const datatable = document.getElementById("coursetable");
+                    datatable.innerHTML = ""; // Clear existing data
+
+                    // Loop through the courses and create a table row for each
+                    courses.forEach((course) => {
+                        const row = `
+                            <tr>
+                                <td>${course.id}</td>
+                                <td>${course.name}</td>
+                                <td>${course.courses}</td>
+                                <td>${course.duration}</td>
+                                <td>${course.seats > 0 ? course.seats : '<span style="color:red;">Full</span>'}</td>
+                            </tr>
+                        `;
+                        datatable.innerHTML += row;
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching courses:", error);
+                });
+        }
+    </script>
+
+</body>
+</html>
